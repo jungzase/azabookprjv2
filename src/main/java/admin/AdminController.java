@@ -19,13 +19,6 @@ public class AdminController {
 	@Autowired
 	private BookService bookService;
 
-	@RequestMapping("/toggle")
-	public String toggleAdmin(HttpSession session) {
-		Boolean current = (Boolean) session.getAttribute("isAdmin");
-		session.setAttribute("isAdmin", current == null ? Boolean.TRUE : !current.booleanValue());
-		return "redirect:/";
-	}
-
 	@RequestMapping("/books/form")
 	public String showBookForm(String isbn, HttpSession session, Model model) {
 		if (!isAdmin(session)) {
