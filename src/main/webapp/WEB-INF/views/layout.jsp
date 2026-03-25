@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -24,12 +25,16 @@ main { min-height: calc(100vh - 140px); padding: 24px 0; }
 .form-row input, .form-row select { width: 100%; box-sizing: border-box; padding: 10px 12px; border: 1px solid #c7c7c7; border-radius: 8px; }
 .inline-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
 .placeholder { padding: 18px; border: 1px dashed #c7c7c7; border-radius: 12px; background: #fbfbfb; }
+.alert { margin-bottom: 18px; padding: 14px 16px; border-radius: 12px; background: #fff6d8; border: 1px solid #f0d98a; }
 </style>
 </head>
 <body>
 	<jsp:include page="/WEB-INF/views/common/header.jsp" />
 	<main>
 		<div class="container">
+			<c:if test="${not empty message}">
+				<div class="alert">${message}</div>
+			</c:if>
 			<jsp:include page="/WEB-INF/views/${mainpage}.jsp" />
 		</div>
 	</main>

@@ -1,20 +1,28 @@
-Legacy Spring MVC 기반의 도서 관리 프로젝트입니다.
+# azabookprj
 
-## 개발 환경
+Legacy Spring MVC book project.
 
-- `web.xml` + `dispatcher-servlet.xml` 기반 설정
-- JSP View Resolver
+## Environment
+
+- `web.xml` + `dispatcher-servlet.xml`
+- JSP view resolver
 - Java 8
-- H2 Database
+- H2 database
 
-## 실행 전 확인 사항
+## Before Run
 
-1. H2를 실행한 뒤 `jdbc:h2:tcp://localhost/~/test` 에 정상적으로 접속되는지 확인합니다.
-2. `books` 테이블과 테스트용 데이터를 생성합니다.
-3. Eclipse에서 해당 프로젝트를 Maven/Spring MVC 프로젝트로 가져옵니다.
-4. Tomcat 서버에서 프로젝트를 실행합니다.
+1. Start H2 and make sure `jdbc:h2:tcp://localhost/~/test` is available.
+2. Create the `books` table and test data.
+3. Run `src/main/resources/sql/member-schema.sql` to create the `members` table.
+4. Import the project into Eclipse as a Maven/Spring MVC project.
+5. Run on Tomcat.
 
-## 참고
+## Sample Login
 
-- Eclipse 관련 개인 설정 파일 및 빌드 결과물은 `.gitignore`에 포함되어 제외됩니다.
-- `main` 브랜치는 팀원 간 공유를 위한 기본 브랜치입니다.
+- `admin / 1234`
+- `user1 / 1234`
+
+## Notes
+
+- Eclipse personal files and build outputs are excluded by `.gitignore`.
+- Main branch is intended for team sharing.
