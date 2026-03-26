@@ -1,5 +1,7 @@
 package member;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,4 +46,19 @@ public class MemberService {
 
 		return memberDAO.updateMember(member) > 0;
 	}
+	// [추가] 관리자용: 전체 회원 목록 가져오기
+		public List<MemberVO> getMemberList() {
+			return memberDAO.findAllMembers();
+		}
+		public MemberVO getMemberById(Long userId) {
+			return memberDAO.findMemberById(userId);
+		}
+
+		public boolean modifyMemberByAdmin(MemberVO member) {
+			return memberDAO.updateMemberByAdmin(member);
+		}
+
+		public boolean removeMember(Long userId) {
+			return memberDAO.deleteMember(userId);
+		}
 }

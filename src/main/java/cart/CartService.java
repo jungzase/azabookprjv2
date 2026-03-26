@@ -2,6 +2,7 @@ package cart;
 
 import java.util.List;
 
+
 public interface CartService {
 
 	// 1. 장바구니 추가 (중복 체크 로직 포함)
@@ -21,8 +22,8 @@ public interface CartService {
     
 	public void modifyCount(CartVO cart);
 
-	public void addCart(CartVO cart);
-
-	public void deleteCart(int cartRank);
-
+		public void addCart(CartVO cart);
+	
+		public void deleteCart(int cartRank);
 }
+	

@@ -19,6 +19,7 @@ public class OrderVO {
 	private String deliveryAddress;
 	private String deliveryDetailAddress;
 	private List<OrderItemVO> items = new ArrayList<OrderItemVO>();
+	private String username;
 
 	public String getStatusLabel() {
 		switch (orderStatus) {
@@ -33,7 +34,7 @@ public class OrderVO {
 		case 4:
 			return "주문취소";
 		default:
-			return "알수없음";
+			return "미확인";
 		}
 	}
 

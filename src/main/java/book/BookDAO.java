@@ -40,7 +40,7 @@ public class BookDAO {
 		List<Object> params = new ArrayList<Object>();
 
 		if (hasKeyword) {
-			sql.append(" AND (LOWER(product_name) LIKE ? OR LOWER(author) LIKE ?)");
+			sql.append(" AND (LOWER(book_name) LIKE ? OR LOWER(author) LIKE ?)");
 			String like = "%" + normalizedKeyword + "%";
 			params.add(like);
 			params.add(like);
@@ -93,7 +93,7 @@ public class BookDAO {
 	}
 
 	public void insert(BookVO book) {
-		String sql = "INSERT INTO books (isbn, product_name, author, publisher, publication_date, price, category, img_link) "
+		String sql = "INSERT INTO books (isbn, book_name, author, publisher, publication_date, price, category_id, img_link) "
 				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
 		try (Connection conn = DBConfig.getConnection();
@@ -106,7 +106,7 @@ public class BookDAO {
 	}
 
 	public void update(BookVO book) {
-		String sql = "UPDATE books SET product_name=?, author=?, publisher=?, publication_date=?, price=?, category=?, img_link=? "
+		String sql = "UPDATE books SET book_name=?, author=?, publisher=?, publication_date=?, price=?, category_id=?, img_link=? "
 				+ "WHERE isbn=?";
 
 		try (Connection conn = DBConfig.getConnection();
@@ -151,13 +151,13 @@ public class BookDAO {
 	private BookVO toBook(ResultSet rs) throws Exception {
 		BookVO book = new BookVO();
 		book.setId(rs.getInt("id"));
-		book.setProductName(rs.getString("product_name"));
+		book.setProductName(rs.getString("book_name"));
 		book.setIsbn(rs.getString("isbn"));
 		book.setAuthor(rs.getString("author"));
 		book.setPublisher(rs.getString("publisher"));
 		book.setPublicationDate(rs.getDate("publication_date"));
 		book.setPrice(rs.getInt("price"));
-		book.setCategory(rs.getString("category"));
+		book.setCategory(rs.getString("category_id"));
 		book.setImgLink(rs.getString("img_link"));
 		return book;
 	}

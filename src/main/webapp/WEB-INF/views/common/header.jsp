@@ -32,8 +32,9 @@
 				</c:otherwise>
 			</c:choose>
 			<c:if test="${sessionScope.isAdmin}">
-				<a href="${pageContext.request.contextPath}/admin/books/form" style="color:#ffe4a8;">도서등록</a>
-				<a href="${pageContext.request.contextPath}/admin/orders" style="color:#ffe4a8;">주문관리</a>
+					<a href="${pageContext.request.contextPath}/admin/books/form" style="color:#ffe4a8;">도서등록</a>
+					<a href="${pageContext.request.contextPath}/admin/members" style="color:#ffe4a8;">회원관리</a>
+					<a href="${pageContext.request.contextPath}/admin/orders" style="color:#ffe4a8;">주문관리</a>
 			</c:if>
 		</div>
 	</div>
