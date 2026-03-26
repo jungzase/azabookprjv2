@@ -37,4 +37,16 @@ public class OrderService {
 
 		return counts;
 	}
+	// 관리자용: 주문 내역 검색
+		public List<OrderVO> getAdminOrders(String searchUserId) {
+			return orderDAO.findAllOrdersForAdmin(searchUserId);
+		}
+		
+		public OrderVO getOrderDetailAdmin(Long orderId) {
+		    return orderDAO.findOrderDetailAdmin(orderId);
+		}
+		
+		public void modifyOrderStatus(Long orderId, int status) {
+			orderDAO.updateOrderStatus(orderId, status);
+		}
 }

@@ -20,16 +20,6 @@
 	</div>
 </div>
 
-<div class="panel" style="margin-top:18px;">
-	<div style="display:grid; grid-template-columns: repeat(5, 1fr); gap:12px; text-align:center;">
-		<div><div style="font-size:30px; font-weight:bold;">${statusCounts[0]}</div><div>주문완료</div></div>
-		<div><div style="font-size:30px; font-weight:bold;">${statusCounts[1]}</div><div>상품준비중</div></div>
-		<div><div style="font-size:30px; font-weight:bold;">${statusCounts[2]}</div><div>배송중</div></div>
-		<div><div style="font-size:30px; font-weight:bold;">${statusCounts[3]}</div><div>배송완료</div></div>
-		<div><div style="font-size:30px; font-weight:bold;">${statusCounts[4]}</div><div>주문취소</div></div>
-	</div>
-</div>
-
 <c:choose>
 	<c:when test="${empty orders}">
 		<div class="placeholder" style="margin-top:18px;">선택한 기간의 주문내역이 없습니다.</div>

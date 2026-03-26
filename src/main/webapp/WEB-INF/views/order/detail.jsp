@@ -69,3 +69,14 @@
 <div class="inline-actions">
 	<a class="btn" href="${pageContext.request.contextPath}/order/history">주문/배송 목록</a>
 </div>
+
+<div class="inline-actions">
+	<c:choose>
+		<c:when test="${sessionScope.isAdmin}">
+			<a class="btn" href="${pageContext.request.contextPath}/admin/orders">주문 관리 목록으로</a>
+		</c:when>
+		<c:otherwise>
+			<a class="btn" href="${pageContext.request.contextPath}/order/history">주문/배송 목록</a>
+		</c:otherwise>
+	</c:choose>
+</div>
