@@ -1,39 +1,38 @@
-package book;
+﻿package book;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-@RequestMapping("/books")
 public class BookController {
 
-	@Autowired
-	private BookService bookService;
+    @Autowired
+    private BookService bookService;
 
-	@RequestMapping("/search")
-	public String search(String keyword, String category, Model model) {
-		boolean hasAnyParam = keyword != null || category != null;
+    @GetMapping("/book/list")
+    public String list(String keyword, Long categoryId, Model model) {
+        List<BookVO> bookList = bookService.getBookList(keyword, categoryId);
+        model.addAttribute("bookList", bookList);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("categoryId", categoryId);
+        return "book/list";
+    }
 
-		model.addAttribute("mainpage", "books/searchMain");
-		model.addAttribute("category", category);
-		model.addAttribute("keyword", keyword);
+    @GetMapping("/book/new")
+    public String newest(Model model) {
+        model.addAttribute("bookList", bookService.getNewestBooks());
+        return "book/list";
+    }
 
-		if (hasAnyParam) {
-			List<BookVO> books = bookService.search(keyword, category);
-			model.addAttribute("books", books);
-		}
-
-		return "layout";
-	}
-
-	@RequestMapping("/detail")
-	public String detail(String isbn, Model model) {
-		model.addAttribute("mainpage", "books/detail");
-		model.addAttribute("book", bookService.getBookDetail(isbn));
-		return "layout";
-	}
+    @GetMapping("/book/detail")
+    public String detail(String isbn, Model model) {
+        model.addAttribute("book", bookService.getBook(isbn));
+        return "book/detail";
+    }
 }
+
+

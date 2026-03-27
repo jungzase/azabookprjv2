@@ -1,98 +1,82 @@
-package order;
+﻿package order;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.List;
+import java.util.Collections;
 
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
+import book.BookService;
+import book.BookVO;
+import cart.CartService;
+import cart.CartVO;
 import member.MemberVO;
 
 @Controller
 public class OrderController {
 
-	private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    @Autowired
+    private CartService cartService;
+    @Autowired
+    private OrderService orderService;
+    @Autowired
+    private BookService bookService;
 
-	@Autowired
-	private OrderService orderService;
+    @GetMapping("/order/checkout")
+    public String checkout(HttpSession session, Model model) {
+        MemberVO loginUser = (MemberVO) session.getAttribute("loginUser");
+        model.addAttribute("cartList", cartService.getCartList(loginUser.getUserId()));
+        model.addAttribute("directOrder", false);
+        return "order/checkout";
+    }
 
-	@RequestMapping("/order/checkout")
-	public String checkout(Model model) {
-		model.addAttribute("mainpage", "order/checkout");
-		return "layout";
-	}
+    @GetMapping("/order/direct")
+    public String directCheckout(String isbn, Integer quantity, HttpSession session, Model model) {
+        MemberVO loginUser = (MemberVO) session.getAttribute("loginUser");
+        BookVO book = bookService.getBook(isbn);
+        int orderQuantity = quantity == null || quantity < 1 ? 1 : quantity;
 
-	@RequestMapping("/order/history")
-	public String history(String startDate, String endDate, HttpSession session, Model model,
-			RedirectAttributes redirectAttributes) {
-		MemberVO loginMember = getLoginMember(session);
-		if (loginMember == null) {
-			redirectAttributes.addFlashAttribute("message", "로그인이 필요합니다.");
-			return "redirect:/member/login";
-		}
+        CartVO directItem = new CartVO();
+        directItem.setUserId(loginUser.getUserId());
+        directItem.setIsbn(book.getIsbn());
+        directItem.setBookName(book.getBookName());
+        directItem.setPrice(book.getPrice());
+        directItem.setQuantity(orderQuantity);
+        directItem.setStock(book.getStock());
 
-		LocalDate end = parseDate(endDate, LocalDate.now());
-		LocalDate start = parseDate(startDate, end.minusMonths(6));
-		List<OrderVO> orders = orderService.getOrders(loginMember.getUser_id(), start, end);
+        model.addAttribute("cartList", Collections.singletonList(directItem));
+        model.addAttribute("directOrder", true);
+        model.addAttribute("directIsbn", isbn);
+        model.addAttribute("directQuantity", orderQuantity);
+        return "order/checkout";
+    }
 
-		model.addAttribute("mainpage", "order/history");
-		model.addAttribute("orders", orders);
-		model.addAttribute("statusCounts", orderService.getStatusCounts(orders));
-		model.addAttribute("startDate", start.format(DATE_FORMAT));
-		model.addAttribute("endDate", end.format(DATE_FORMAT));
-		return "layout";
-	}
+    @PostMapping("/order/create")
+    public String create(OrderVO order, String directIsbn, Integer directQuantity, HttpSession session, Model model) {
+        MemberVO loginUser = (MemberVO) session.getAttribute("loginUser");
+        order.setUserId(loginUser.getUserId());
 
-	@RequestMapping("/order/detail")
-	public String detail(Long orderId, HttpSession session, Model model, RedirectAttributes redirectAttributes) {
-		MemberVO loginMember = getLoginMember(session);
-		if (loginMember == null) {
-			redirectAttributes.addFlashAttribute("message", "로그인이 필요합니다.");
-			return "redirect:/member/login";
-		}
-
-		if (orderId == null) {
-			redirectAttributes.addFlashAttribute("message", "주문번호가 필요합니다.");
-			return "redirect:/order/history";
-		}
-
-		OrderVO order = orderService.getOrderDetail(orderId, loginMember.getUser_id());
-		if (order == null) {
-			redirectAttributes.addFlashAttribute("message", "주문 정보를 찾을 수 없습니다.");
-			return "redirect:/order/history";
-		}
-
-		model.addAttribute("mainpage", "order/detail");
-		model.addAttribute("order", order);
-		return "layout";
-	}
-
-	@RequestMapping("/admin/orders")
-	public String manage(Model model) {
-		model.addAttribute("mainpage", "order/manage");
-		return "layout";
-	}
-
-	private MemberVO getLoginMember(HttpSession session) {
-		return (MemberVO) session.getAttribute("loginMember");
-	}
-
-	private LocalDate parseDate(String value, LocalDate defaultValue) {
-		if (value == null || value.trim().length() == 0) {
-			return defaultValue;
-		}
-
-		try {
-			return LocalDate.parse(value, DATE_FORMAT);
-		} catch (DateTimeParseException e) {
-			return defaultValue;
-		}
-	}
+        try {
+            Long orderId;
+            if (directIsbn != null && !directIsbn.isEmpty()) {
+                int quantity = directQuantity == null || directQuantity < 1 ? 1 : directQuantity;
+                orderId = orderService.createDirectOrder(order, directIsbn, quantity);
+            } else {
+                orderId = orderService.createOrder(order);
+            }
+            model.addAttribute("orderId", orderId);
+            return "order/result";
+        } catch (OutOfStockException e) {
+            model.addAttribute("bookName", e.getBookName());
+            model.addAttribute("requestedQuantity", e.getRequestedQuantity());
+            model.addAttribute("availableQuantity", e.getAvailableQuantity());
+            return "order/outOfStock";
+        }
+    }
 }
+
+

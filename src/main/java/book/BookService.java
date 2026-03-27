@@ -1,38 +1,16 @@
-package book;
+﻿package book;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-@Service
-public class BookService {
-
-	@Autowired
-	private BookDAO bookDAO;
-
-	public List<BookVO> recommendBooks() {
-		return bookDAO.recommendBooks();
-	}
-
-	public List<BookVO> search(String keyword, String category) {
-		return bookDAO.search(keyword, category);
-	}
-
-	public BookVO getBookDetail(String isbn) {
-		return bookDAO.findByIsbn(isbn);
-	}
-
-	public void save(BookVO book, boolean update) {
-		if (update) {
-			bookDAO.update(book);
-			return;
-		}
-
-		bookDAO.insert(book);
-	}
-
-	public void delete(String isbn) {
-		bookDAO.delete(isbn);
-	}
+public interface BookService {
+    List<BookVO> getBookList(String keyword, Long categoryId);
+    List<BookVO> getNewestBooks();
+    List<BookVO> getTopRankedBooks(int limit);
+    BookVO getBook(String isbn);
+    boolean insert(BookVO vo);
+    boolean update(BookVO vo);
+    boolean delete(String isbn);
+    List<BookVO> getAllBooksAdmin();
 }
+
+

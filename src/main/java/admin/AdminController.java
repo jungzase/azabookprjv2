@@ -1,70 +1,72 @@
-package admin;
-
-import java.sql.Date;
-
-import javax.servlet.http.HttpSession;
+﻿package admin;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import book.BookService;
 import book.BookVO;
+import member.MemberService;
+import order.OrderService;
 
 @Controller
-@RequestMapping("/admin")
 public class AdminController {
 
-	@Autowired
-	private BookService bookService;
+    @Autowired
+    private BookService bookService;
+    @Autowired
+    private MemberService memberService;
+    @Autowired
+    private OrderService orderService;
 
-	@RequestMapping("/books/form")
-	public String showBookForm(String isbn, HttpSession session, Model model) {
-		if (!isAdmin(session)) {
-			return "redirect:/";
-		}
+    @GetMapping("/admin/books")
+    public String books(Model model) {
+        model.addAttribute("bookList", bookService.getAllBooksAdmin());
+        return "admin/bookList";
+    }
 
-		model.addAttribute("mainpage", "admin/bookform");
-		if (isbn != null && isbn.trim().length() > 0) {
-			model.addAttribute("book", bookService.getBookDetail(isbn));
-		}
+    @GetMapping("/admin/book/form")
+    public String bookForm(String isbn, Model model) {
+        if (isbn != null && !isbn.isEmpty()) {
+            model.addAttribute("book", bookService.getBook(isbn));
+        }
+        return "admin/bookForm";
+    }
 
-		return "layout";
-	}
+    @PostMapping("/admin/book/save")
+    public String save(BookVO vo) {
+        if (bookService.getBook(vo.getIsbn()) == null) {
+            bookService.insert(vo);
+        } else {
+            bookService.update(vo);
+        }
+        return "redirect:/admin/books";
+    }
 
-	@RequestMapping("/books/save")
-	public String saveBook(BookVO book, String publicationDate, String price, String isUpdate, HttpSession session) {
-		if (!isAdmin(session)) {
-			return "redirect:/";
-		}
-		if (publicationDate != null && publicationDate.trim().length() > 0) {
-			book.setPublicationDate(Date.valueOf(publicationDate));
-		}
+    @PostMapping("/admin/book/delete")
+    public String delete(String isbn) {
+        bookService.delete(isbn);
+        return "redirect:/admin/books";
+    }
 
-		if (price != null && price.trim().length() > 0) {
-			book.setPrice(Integer.parseInt(price));
-		}
+    @GetMapping("/admin/members")
+    public String members(Model model) {
+        model.addAttribute("memberList", memberService.getAllMembers());
+        return "admin/memberList";
+    }
 
-		bookService.save(book, "true".equals(isUpdate));
-		return "redirect:/books/detail?isbn=" + book.getIsbn();
-	}
+    @GetMapping("/admin/orders")
+    public String orders(Model model) {
+        model.addAttribute("orderList", orderService.getAllOrders());
+        return "admin/orderList";
+    }
 
-	@RequestMapping("/books/delete")
-	public String deleteBook(String isbn, HttpSession session) {
-		if (!isAdmin(session)) {
-			return "redirect:/";
-		}
-
-		if (isbn != null && isbn.trim().length() > 0) {
-			bookService.delete(isbn);
-		}
-
-		return "redirect:/books/search";
-	}
-
-	private boolean isAdmin(HttpSession session) {
-		Boolean isAdmin = (Boolean) session.getAttribute("isAdmin");
-		return isAdmin != null && isAdmin.booleanValue();
-	}
+    @PostMapping("/admin/order/status")
+    public String updateOrderStatus(Long orderId, int orderStatus) {
+        orderService.updateStatus(orderId, orderStatus);
+        return "redirect:/admin/orders";
+    }
 }
+

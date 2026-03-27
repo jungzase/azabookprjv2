@@ -1,35 +1,23 @@
-package home;
-
-import java.util.Collections;
-import java.util.List;
+﻿package home;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import book.BookService;
-import book.BookVO;
 
 @Controller
-@RequestMapping("/")
 public class HomeController {
 
-	@Autowired
-	private BookService bookService;
+    @Autowired
+    private BookService bookService;
 
-	@RequestMapping("")
-	public String home(Model model) {
-		List<BookVO> recommend = Collections.emptyList();
-
-		try {
-			recommend = bookService.recommendBooks();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		model.addAttribute("mainpage", "home/homeMain");
-		model.addAttribute("recommend", recommend);
-		return "layout";
-	}
+    @GetMapping("/")
+    public String home(Model model) {
+        model.addAttribute("recommendedBooks", bookService.getTopRankedBooks(3));
+        return "home";
+    }
 }
+
+
