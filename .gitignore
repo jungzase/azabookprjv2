@@ -1,9 +1,13 @@
-/bin
-/target/
-/build/
-
+target/
+tmp_zip/
+.settings/
 .classpath
 .project
-.settings/
+.springBeans
 
-*log
+# OS files
+Thumbs.db
+Desktop.ini
+
+# Logs
+*.log
